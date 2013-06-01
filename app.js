@@ -1,42 +1,30 @@
-var http = require('http'),
-	fs = require('fs'),
-	path = require('path');
+var express = require('express')
+  , routes = require('./routes')
+  , user = require('./routes/user')
+  , http = require('http')
+  , path = require('path');
 
-var cachedFiles = {};
+var app = express();
 
-http.createServer(function(req, res) {
-	var file = path.join(__dirname, req.url);
+// all environments
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
 
-	var cachedFile = cachedFiles[file];
-	if(cachedFile) {
-		console.log('serving cached file: ', req.url);
-		res.end(cachedFile);
-		return;
-	}
+// development only
+if ('development' == app.get('env')) {
+  app.use(express.errorHandler());
+}
 
-	fs.readFile(file, function(err, content) {
-		if(err) {
-			res.writeHead(404);
-			res.end("Could not find the file");
-			return;
-		}
+app.get('/', routes.index);
+app.get('/users', user.list);
 
-		fs.watch(file, function(e) {
-			if(e == 'change') {
-				fs.readFile(file, function(err, content) {
-				if(err) {
-					delete cachedFiles[file];
-					return;
-				}
-
-					console.log('refreshing cache', req.url);
-					cachedFiles[file] = content;
-				});
-			}
-		});
-
-		console.log('serving new file', req.url);
-		cachedFiles[file] = content;
-		res.end(content);
-	});
-}).listen(3000);
+http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});
