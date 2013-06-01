@@ -7,7 +7,7 @@
 <button id="send">Send</button>
 
 <script>
-var socket = io.connect();
+var socket = io.connect(null, { 'transports': ['xhr-polling']});
 $(document).ready(function() {
 
 	socket.on('message', function(message) {
