@@ -1,13 +1,27 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
-<h1 id="counter"></h1>
+<ul id="messages"></ul>
+
+<input type="text" id="message"></input>
+<button id="send">Send</button>
 
 <script>
 var socket = io.connect();
 $(document).ready(function() {
-  socket.on('count', function (data) {
-  	$('#counter').text(data);
-  });
+
+	socket.on('message', function(message) {
+		$('#messages').append('<li>' + message + '</li>');
+	});
+
+	$('#send').click(function() {
+		var message = $('#message').val();
+		$('#message').val('');
+		if(!message) {
+			return;
+		}
+
+		socket.emit('message', message);
+	});
 });
 </script>

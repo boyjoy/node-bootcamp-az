@@ -18,13 +18,14 @@ function handler (req, res) {
 }
 
 io.set('log level', 0);
-io.sockets.on('connection', function (socket) {
-  var count = 0;
 
-setInterval(function() {
-  count += 1;
-  socket.emit('count', count);
-}, 1000)
+
+io.sockets.on('connection', function (socket) {
+
+  socket.on('message', function(data) {
+    io.sockets.emit('message', data);
+    console.log(data);
+  });
 
 });
 
