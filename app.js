@@ -5,7 +5,7 @@ var app = require('http').createServer(handler)
 app.listen(process.env.PORT || 3000);
 
 function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
+  fs.readFile(__dirname + '/chat.html',
   function (err, data) {
     if (err) {
       res.writeHead(500);
