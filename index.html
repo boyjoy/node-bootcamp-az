@@ -1,0 +1,13 @@
+<script src="/socket.io/socket.io.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<h1 id="counter"></h1>
+
+<script>
+var socket = io.connect();
+$(document).ready(function() {
+  socket.on('count', function (data) {
+  	$('#counter').text(data);
+  });
+});
+</script>
